@@ -1,0 +1,62 @@
+#{minikube start} dulu sebelum jalani skaffold oke 
+
+apiVersion: skaffold/v4beta3
+kind: Config
+manifests:
+  rawYaml: #utk ngasih lokasi yaml config ny, utk dicek perubahan file ny. gek tiap kali kito mulai skaffold, dio bakal apply tiap config file ny, trus kalo ado update di config bakal di apply ny setelah selesai update, trus kalo stop jalani skaffold ny bakal apus object kubernetesny satu satu
+    - ./infra/k8s/*.yaml
+build: #bagian build image
+  local: 
+    push: false #matiken default kalo ada update di image docker, langsung otomatis push ke docker hub, soalny kalo sudh nge sync nian antara lokal docker client samo kubernetesny, dk perlu lagi di up ke docker hub
+  artifacts: #tempat utk isi list image yang dipakai utk pod pod kubernetes node yg kito pake
+    - image: fadhilaf/client-test #nama image / tag image ny
+      context: client #di folder client (lokasi terhadap posisi config)
+      docker: 
+        dockerfile: Dockerfile #file dockerfile
+      sync: 
+        manual: #bagian utk file file yg kalo update, yg keupdate itu lgsg dilempar ke image dlm pod nyo. kalo file diluar yg di pilih ini yg berubah, dio harus rebuild image containerny
+          - src: 'src/**/*.js' #file mano be yg perubahan ny di pantau. trus kalo berubah, file yg di select ini lgsg dilempar ke container dalam pod kubernetesny (dk perlu rebuild image lagi).
+                               #jadi kalo kito pake create-react-app atau nodemon (yg samo samo cek perubahan file trus hot reload). jadi pas kito ganti kodingan pas skaffoldny jalan, di app ny bakal langsung teganti jg. tapi kalo dk pake yg semacam nodemon atau create-react-app dio dk hot reload, soalny app ny dk ngeliatin file yg berubah trus reload app
+                               #kalo misal kodingan kito ganti trus app ny dk do perubahan / muncul log baru dari scaffoldny, biso jadi kito dk ado script semacam nodemon atau create-react-app ny, jadi dk biso hot reload
+            dest: . #prefix lokasi narok file yg baru diubah itu . berarti sesuai working directory image ny (biasonyo di /app)
+    - image: fadhilaf/comments-test
+      context: comments
+      docker: 
+        dockerfile: Dockerfile
+      sync: 
+        manual:
+          - src: '*.js'
+            dest: .
+    - image: fadhilaf/event-bus-test
+      context: event-bus
+      docker: 
+        dockerfile: Dockerfile
+      sync: 
+        manual:
+          - src: '*.js'
+            dest: .
+    - image: fadhilaf/moderation-test
+      context: moderation
+      docker: 
+        dockerfile: Dockerfile
+      sync: 
+        manual:
+          - src: '*.js'
+            dest: .
+    - image: fadhilaf/posts-test
+      context: posts
+      docker: 
+        dockerfile: Dockerfile
+      sync: 
+        manual:
+          - src: '*.js'
+            dest: .
+    - image: fadhilaf/query-test
+      context: query
+      docker: 
+        dockerfile: Dockerfile
+      sync: 
+        manual:
+          - src: '*.js'
+            dest: .
+

@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata: 
+  name: moderation-depl 
+spec: 
+  replicas: 1 #jumlah pod yang mau dibikin (nanti tiap pod isi containerny sama)
+  selector: 
+    matchLabels: 
+      app: moderation #key-value pair
+  template: 
+    metadata: 
+      labels:
+        app: moderation #key-value pair (untuk ngasih label ke tiap container yang nak dimasukin ke pod)
+    spec: 
+      containers: #list contianer yang mau dimasukkan ke 1 pod (yg nanti bisa di buat replika)
+        - name: moderation 
+          image: fadhilaf/moderation-test # belakangny dk usah dispecify versi apo, biar tiap kali kito restart deployemntny, dio bakal otomatis pake versi terbaru dari docker hub dan docker image ny harus pake tag :latest (kalo ck ini "fadhilaf/moderation-test:0.0.2" dio dk otomatis). tapi kato chatgpt avoid using :latest, meskipun dk otomatis lebih mending spesifik
+---
+apiVersion: v1 #untuk config khusus object service clustIP nyo pod moderation
+kind: Service 
+metadata: 
+  name: moderation-clusterip-srv 
+spec: 
+  selector: 
+    app: moderation 
+  type: ClusterIP #config object service itu tipe default nyo clusterIP (jadi boleh dk ditulis) 
+  ports: 
+    - name: moderation 
+      protocol: TCP 
+      port: 4003 #port clusterip service ny
+      targetPort: 4003 #port yg dipake oleh app

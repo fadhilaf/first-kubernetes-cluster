@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress 
+metadata: 
+  name: ingress-srv 
+  annotations: #yang ngasih tau tipe ingress mano yang nak dipake utk ingress ini (fungsi ingress itu api gateaway, yang ngasi satu tempat lokasi yg disambungin ke service2)
+    kubernetes.io/ingress.class: nginx #kito pilih nginx-ingress (ado banyak tipe/class ingress yang lain yg biso dipake)
+    nginx.ingress.kubernetes.io/use-regex: "true" #harus tambah ini kalo nk pake identifier path yg pake regex (liat bagian spec rules host http paths /posts/?(.*)/comments)
+spec: 
+  rules: 
+    - host: posts.com #ini utk nentuin host / domain yg bakal dipake utk akses ke node yg pake ingress controller ini. kalo udah di buat tambah domain ini ke file /etc/hosts tambahin line "{minikube ip} posts.com". utk ditambah domain itu ke lookup table internal laptop wkwkwk. (jadi seakan akan dari dns, meskipun dns laptop dewek :V) trus diarahin ke ip minikube
+      http: 
+        paths: #ini utk list path path ke service service ny (list api ny) jadi API gateaway (karena nginx emg bisa jadi API gateaway)
+        - path: /posts/create
+          pathType: Prefix #tipe cara validasi path ny (ngecek pola path ny afakah benar masuk ke /posts apa tidak). biso dibuat regex jg kyk /[0-9]\s ck itu, tapi pathType ny bukan prefix. pathType prefix artiny apa sj yg belakangny path yg kito tulis itu brrti masuk
+          backend: 
+            service:
+              name: posts-clusterip-srv 
+              port: 
+                number: 4000 #port yg dipake clusterip ny
+        - path: /posts 
+          pathType: Prefix
+          backend: 
+            service: 
+              name: query-clusterip-srv 
+              port: 
+                number: 4002
+        - path: /posts/?(.*)/comments # utk pake regex dio kek ini templateny harus "?{regex}"
+          pathType: Prefix
+          backend: 
+            service: 
+              name: comments-clusterip-srv 
+              port: 
+                number: 4001
+        - path: /?(.*)
+          pathType: Prefix
+          backend:
+            service:
+              name: client-clusterip-srv
+              port:
+                number: 3000

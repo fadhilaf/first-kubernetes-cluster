@@ -1,0 +1,16 @@
+apiVersion: v1 
+kind: Service 
+metadata: 
+  name: posts-srv 
+spec: 
+  type: NodePort #tipe object serviceny
+  selector: 
+    app: posts
+  ports: 
+    - name: posts 
+      protocol: TCP
+      port: 4000 #port yg bakal dipake di object service ny. (gek akses lewat port ini trus ditrusken ke port targetPort). agek dari luar (dari laptop kito ke kubernetes) kito pake nodeport port biasonyo 3xxxx. jadi 3xxxx -> 4000 -> 4000. (kenapo perlu 4000 lagi di tengah2? kareno pod ini gek bentukny biso diduplikat dijalani bbrp instance yg samo, jadi port dari app ny pasti makek port yg samo, makonyo perlu 4000 di tengah tengah). yang nentuin requestny ke pod mano itu si kubernetes ny
+      targetPort: 4000 #port yg dipake apl kito didalem container
+#caro akses ny
+#minikube ip (command utk ambil ip kubernetes ny)
+#url ny => {ip minikube}:{nodeport port}
