@@ -18,7 +18,7 @@ build: #bagian build image
           - src: 'src/**/*.js' #file mano be yg perubahan ny di pantau. trus kalo berubah, file yg di select ini lgsg dilempar ke container dalam pod kubernetesny (dk perlu rebuild image lagi).
                                #jadi kalo kito pake create-react-app atau nodemon (yg samo samo cek perubahan file trus hot reload). jadi pas kito ganti kodingan pas skaffoldny jalan, di app ny bakal langsung teganti jg. tapi kalo dk pake yg semacam nodemon atau create-react-app dio dk hot reload, soalny app ny dk ngeliatin file yg berubah trus reload app
                                #kalo misal kodingan kito ganti trus app ny dk do perubahan / muncul log baru dari scaffoldny, biso jadi kito dk ado script semacam nodemon atau create-react-app ny, jadi dk biso hot reload
-            dest: . #prefix lokasi narok file yg baru diubah itu . berarti sesuai working directory image ny (biasonyo di /app)
+            dest: . #prefix lokasi narok file yg baru diubah itu . berarti sesuai working directory image ny (biasonyo di /app), trus dilanjutken dengen posisi file ny aggaplh /src/index.js jadi /app/src/index.js (workdir ny)/(lokasi file ny)
     - image: fadhilaf/comments-test
       context: comments
       docker: 
