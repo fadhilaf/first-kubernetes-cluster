@@ -25,7 +25,7 @@ spec:
     app: client 
   type: ClusterIP #config object service itu tipe default nyo clusterIP (jadi boleh dk ditulis) 
   ports: 
-    - name: client 
+    - name: client  #nama utk port ny
       protocol: TCP 
       port: 3000 #port clusterip service ny
       targetPort: 3000 #port yg dipake oleh app

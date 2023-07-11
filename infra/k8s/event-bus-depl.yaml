@@ -25,7 +25,7 @@ spec:
     app: event-bus 
   type: ClusterIP #config object service itu tipe default nyo clusterIP (jadi boleh dk ditulis) 
   ports: 
-    - name: event-bus 
+    - name: event-bus  #nama utk port ny
       protocol: TCP 
       port: 4005 #port clusterip service ny
       targetPort: 4005 #port yg dipake oleh app
